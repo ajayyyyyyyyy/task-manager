@@ -12,12 +12,18 @@ public class Task {
     private Long id;
 
     private String description;
-
+    private String comments;
     @Column(name = "created_date")
     private LocalDateTime createdDate;
     @Enumerated(EnumType.STRING)
     private TaskStatus status; // Enum to store task status
 
+    public String getComments() {
+        return comments;
+    }
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
     public TaskStatus getStatus() {
         return status;
     }

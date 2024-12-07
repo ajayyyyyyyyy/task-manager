@@ -19,6 +19,7 @@ public class TaskForm extends Dialog {
     private final ComboBox<TaskStatus> statusField;
     private final Button saveButton;
     private final Button cancelButton;
+    private final TextField commentsField;
 
     private final TaskService taskService;
     private final Grid<Task> grid;
@@ -29,24 +30,28 @@ public class TaskForm extends Dialog {
         this.grid = grid;
 
         descriptionField = new TextField("Description");
+        commentsField = new TextField("Comments");
         createdDateField = new DatePicker("Created Date");
         statusField = new ComboBox<>("Status", TaskStatus.values()); // Add status field
         saveButton = new Button("Save", e -> saveTask());
         cancelButton = new Button("Cancel", e -> close());
 
-        add(descriptionField, createdDateField, saveButton, cancelButton);
+        add(descriptionField,commentsField, createdDateField, saveButton, cancelButton);
     }
 
     public void open() {
         task = new Task();
         descriptionField.setValue("");
+        commentsField.setValue("");
         createdDateField.setValue(LocalDate.now());
         statusField.setValue(TaskStatus.PENDING); // Reset status to default
         setOpened(true);
+
     }
 
     private void saveTask() {
         task.setDescription(descriptionField.getValue());
+        task.setComments(commentsField.getValue());
         task.setCreatedDate(createdDateField.getValue().atStartOfDay());
         task.setStatus(statusField.getValue()); // Set selected status
         taskService.saveTask(task);

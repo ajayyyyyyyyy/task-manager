@@ -1,4 +1,59 @@
-/* Example CSS */
+/* Global Styles */
 body {
     font-family: Arial, sans-serif;
+}
+
+/* TextArea Customization */
+.vaadin-grid-cell {
+    /* Allow text to wrap inside grid cells */
+    white-space: normal;
+    word-wrap: break-word;
+}
+
+.vaadin-grid-cell input,
+.vaadin-grid-cell textarea {
+    /* Increase the size of input fields and textareas */
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 4px;
+    box-sizing: border-box;
+    min-height: 50px;  /* Ensure the text area is tall enough to display text properly */
+    width: 100%;       /* Ensure the textarea spans the full width of the grid cell */
+}
+
+.vaadin-grid .vaadin-grid-cell-content {
+    /* Ensure text areas grow in a controlled manner */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+/* Customize appearance of grid rows */
+.vaadin-grid-cell {
+    overflow: hidden;
+    text-overflow: ellipsis;  /* This will add an ellipsis if text is too long for the cell */
+    padding: 0 10px;
+    vertical-align: middle;
+}
+
+.vaadin-grid-cell textarea {
+    /* Allow textarea to wrap and grow properly */
+    word-wrap: break-word;
+    resize: both;  /* Allow resizing */
+}
+
+/* Task Status ComboBox Styling */
+.vaadin-grid-cell vaadin-combo-box {
+    max-width: 100px;
+}
+
+/* Optional: Custom Styling for Notifications */
+.v-slick-notification {
+    background-color: #32a852;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

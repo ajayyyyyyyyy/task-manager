@@ -15,6 +15,9 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
+    }
     public List<Task> getTasks(String filter) {
         if (filter == null || filter.isEmpty()) {
             return taskRepository.findAll();

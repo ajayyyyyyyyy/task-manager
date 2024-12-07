@@ -29,11 +29,16 @@ public class TaskView extends VerticalLayout {
         grid = new Grid<>(Task.class);
 //        grid.setColumns("description", "createdDate", "status"); // Add "status" column
         grid.setColumns("description", "createdDate");
+
+        grid.getColumnByKey("description").setAutoWidth(true).setResizable(true);
+
         grid.addComponentColumn(task -> createStatusComboBox(task)) // Add editable status column
                 .setHeader("Status");
         grid.addComponentColumn(task -> createDeleteButton(task))
                 .setHeader("Actions");
 
+        grid.addComponentColumn(task -> createEditableCommentsField(task))
+                .setHeader("Comments");
         // Filter setup
         filterText = new TextField();
         filterText.setPlaceholder("Filter tasks...");
@@ -43,11 +48,28 @@ public class TaskView extends VerticalLayout {
         TaskForm taskForm = new TaskForm(taskService, grid);
         Button addButton = new Button("Add Task", e -> taskForm.open());
 
+        Button downloadButton = new Button("Download CSV");
+        downloadButton.addClickListener(e -> {
+            getUI().ifPresent(ui -> ui.getPage().open("/api/tasks/download"));
+        });
         // Layout setup
 //        add(title, addButton, filterText, grid);
-        add(addButton, filterText, grid);
+        add(addButton,downloadButton, filterText, grid);
 
         updateTaskList(); // Initial update of the task list
+    }
+
+    private TextField createEditableCommentsField(Task task) {
+        TextField commentsField = new TextField();
+        commentsField.setValue(task.getComments());
+        commentsField.setAutoselect(true);
+        commentsField.setClearButtonVisible(true);
+        commentsField.addValueChangeListener(event -> {
+            task.setComments(event.getValue());
+            taskService.saveTask(task); // Save the updated task comments
+            Notification.show("Comments updated", 2000, Notification.Position.MIDDLE);
+        });
+        return commentsField;
     }
 
     // Method to create the ComboBox for changing task status
