@@ -17,8 +17,6 @@ public class TaskForm extends Dialog {
     private final TextField descriptionField;
     private final DatePicker createdDateField;
     private final ComboBox<TaskStatus> statusField;
-    private final Button saveButton;
-    private final Button cancelButton;
     private final TextField commentsField;
 
     private final TaskService taskService;
@@ -33,8 +31,8 @@ public class TaskForm extends Dialog {
         commentsField = new TextField("Comments");
         createdDateField = new DatePicker("Created Date");
         statusField = new ComboBox<>("Status", TaskStatus.values()); // Add status field
-        saveButton = new Button("Save", e -> saveTask());
-        cancelButton = new Button("Cancel", e -> close());
+        Button saveButton = new Button("Save", e -> saveTask());
+        Button cancelButton = new Button("Cancel", e -> close());
 
         add(descriptionField,commentsField, createdDateField, saveButton, cancelButton);
     }
@@ -44,7 +42,7 @@ public class TaskForm extends Dialog {
         descriptionField.setValue("");
         commentsField.setValue("");
         createdDateField.setValue(LocalDate.now());
-        statusField.setValue(TaskStatus.PENDING); // Reset status to default
+        statusField.setValue(TaskStatus.OPEN); // Reset status to default
         setOpened(true);
 
     }

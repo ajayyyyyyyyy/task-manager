@@ -1,7 +1,7 @@
 package com.akt.taskmanager.entity;
 
 public enum TaskStatus {
-    PENDING,
+    OPEN,
     IN_PROGRESS,
-    COMPLETED
+    CLOSED
 }

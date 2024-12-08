@@ -6,9 +6,12 @@ import com.akt.taskmanager.service.TaskService;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.provider.Query;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
@@ -27,18 +30,38 @@ public class TaskView extends VerticalLayout {
 
         // Grid setup
         grid = new Grid<>(Task.class);
+
 //        grid.setColumns("description", "createdDate", "status"); // Add "status" column
-        grid.setColumns("description", "createdDate");
+       // grid.setColumns("description", "createdDate");
+        grid.removeAllColumns();
+        grid.addComponentColumn(this::createTaskNumberColumn)
+                .setHeader("No.")
+                .setAutoWidth(true)
+                .setResizable(true);
 
-        grid.getColumnByKey("description").setAutoWidth(true).setResizable(true);
+        grid.addColumn(Task::getDescription)
+                .setSortable(true)
+                .setHeader("Description")
+                .setAutoWidth(true)
+                .setResizable(true);
 
-        grid.addComponentColumn(task -> createStatusComboBox(task)) // Add editable status column
-                .setHeader("Status");
-        grid.addComponentColumn(task -> createDeleteButton(task))
-                .setHeader("Actions");
+        grid.addColumn(Task::getCreatedDate)
+                .setSortable(true)
+                .setHeader("Created Date")
+                .setAutoWidth(true)
+                .setResizable(true);
+        grid.addColumn(Task::getStatus)
+                .setSortable(true)
+                .setHeader("Status")
+                .setAutoWidth(true)
+                .setResizable(true);
 
-        grid.addComponentColumn(task -> createEditableCommentsField(task))
-                .setHeader("Comments");
+        grid.addComponentColumn(this::createDeleteButton)
+                .setHeader("Actions").setAutoWidth(true).setResizable(true);
+        grid.addComponentColumn(this::createEditableCommentsField)
+                .setHeader("Comments").setAutoWidth(true).setResizable(true);
+        grid.addComponentColumn(this::createStatusComboBox) // Add editable status column
+                .setHeader("Update Status").setAutoWidth(true).setResizable(true);
         // Filter setup
         filterText = new TextField();
         filterText.setPlaceholder("Filter tasks...");
@@ -59,8 +82,17 @@ public class TaskView extends VerticalLayout {
         updateTaskList(); // Initial update of the task list
     }
 
-    private TextField createEditableCommentsField(Task task) {
-        TextField commentsField = new TextField();
+    private Span createTaskNumberColumn(Task task) {
+        // Get all tasks currently displayed in the grid
+        var items = grid.getDataProvider().fetch(new Query<>()).toList();
+        // Find the index of the current task and add 1 for human-friendly numbering
+        int rowIndex = items.indexOf(task) + 1;
+        return new Span(String.valueOf(rowIndex));
+    }
+
+    private TextArea createEditableCommentsField(Task task) {
+        TextArea commentsField = new TextArea();
+        commentsField.setWidthFull();
         commentsField.setValue(task.getComments());
         commentsField.setAutoselect(true);
         commentsField.setClearButtonVisible(true);
@@ -68,6 +100,7 @@ public class TaskView extends VerticalLayout {
             task.setComments(event.getValue());
             taskService.saveTask(task); // Save the updated task comments
             Notification.show("Comments updated", 2000, Notification.Position.MIDDLE);
+            updateTaskList();
         });
         return commentsField;
     }
@@ -82,7 +115,6 @@ public class TaskView extends VerticalLayout {
             taskService.saveTask(task); // Save the updated task status
             // Notify the UI of the update (push the change to all clients)
             Notification.show("Task status updated", 2000, Notification.Position.MIDDLE);
-
             // Update task list in real-time
             updateTaskList();
         });
